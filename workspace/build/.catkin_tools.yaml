@@ -1,0 +1,6 @@
+devel_space: /home/nao/workspace/devel
+install: false
+install_space: /home/nao/workspace/install
+profile: default
+source_space: /home/nao/workspace/src
+workspace: /home/nao/workspace

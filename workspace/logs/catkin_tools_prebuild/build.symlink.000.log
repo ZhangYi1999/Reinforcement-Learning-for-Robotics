@@ -1,0 +1,12 @@
+Symlinking /home/nao/workspace/devel/./env.sh
+Symlinking /home/nao/workspace/devel/./cmake.lock
+Symlinking /home/nao/workspace/devel/./local_setup.sh
+Symlinking /home/nao/workspace/devel/./local_setup.bash
+Symlinking /home/nao/workspace/devel/./_setup_util.py
+Symlinking /home/nao/workspace/devel/./setup.sh
+Symlinking /home/nao/workspace/devel/./setup.bash
+Symlinking /home/nao/workspace/devel/./setup.zsh
+Symlinking /home/nao/workspace/devel/./local_setup.zsh
+Symlinking /home/nao/workspace/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /home/nao/workspace/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+Symlinking /home/nao/workspace/devel/lib/pkgconfig/catkin_tools_prebuild.pc

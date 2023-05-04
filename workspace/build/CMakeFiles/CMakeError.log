@@ -1,0 +1,79 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/nao/workspace/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_867e8/fast"
+/usr/bin/make -f CMakeFiles/cmTC_867e8.dir/build.make CMakeFiles/cmTC_867e8.dir/build
+make[1]: Entering directory '/home/nao/workspace/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+Building C object CMakeFiles/cmTC_867e8.dir/CheckSymbolExists.c.o
+/usr/bin/x86_64-linux-gnu-gcc-5     -o CMakeFiles/cmTC_867e8.dir/CheckSymbolExists.c.o   -c /home/nao/workspace/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+Linking C executable cmTC_867e8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_867e8.dir/link.txt --verbose=1
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/x86_64-linux-gnu-gcc-5       CMakeFiles/cmTC_867e8.dir/CheckSymbolExists.c.o  -o cmTC_867e8 -rdynamic 
+CMakeFiles/cmTC_867e8.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_867e8.dir/build.make:97: recipe for target 'cmTC_867e8' failed
+make[1]: *** [cmTC_867e8] Error 1
+make[1]: Leaving directory '/home/nao/workspace/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_867e8/fast' failed
+make: *** [cmTC_867e8/fast] Error 2
+
+File /home/nao/workspace/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/nao/workspace/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_33b9c/fast"
+/usr/bin/make -f CMakeFiles/cmTC_33b9c.dir/build.make CMakeFiles/cmTC_33b9c.dir/build
+make[1]: Entering directory '/home/nao/workspace/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+Building C object CMakeFiles/cmTC_33b9c.dir/CheckFunctionExists.c.o
+/usr/bin/x86_64-linux-gnu-gcc-5    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_33b9c.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+Linking C executable cmTC_33b9c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33b9c.dir/link.txt --verbose=1
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/x86_64-linux-gnu-gcc-5   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_33b9c.dir/CheckFunctionExists.c.o  -o cmTC_33b9c -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_33b9c.dir/build.make:97: recipe for target 'cmTC_33b9c' failed
+make[1]: *** [cmTC_33b9c] Error 1
+make[1]: Leaving directory '/home/nao/workspace/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_33b9c/fast' failed
+make: *** [cmTC_33b9c/fast] Error 2
+
+
