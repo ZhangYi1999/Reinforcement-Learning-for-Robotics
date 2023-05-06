@@ -25,10 +25,7 @@ class Central:
         self.repeatFlag = False
         self.targetAngle = -pi/2
 
-        self.set_stiffness(True) 
-
-         
-
+        self.set_stiffness(True) # set stifftness at first
         pass
 
 
@@ -41,12 +38,6 @@ class Central:
         self.joint_names = data.name 
         self.joint_angles = data.position
         self.joint_velocities = data.velocity
-        # print('elbow_angle:',self.joint_angles[4])
-        # print('target_angle:',self.targetAngle)
-
-        # print('joint_names:',self.joint_names)
-        # print('joint_angles:',self.joint_angles)
-
 
         pass
 
@@ -57,20 +48,17 @@ class Central:
         elif data.bumper == 1:
             self.stiffness = False
 
-    def touch_cb(self,data):
-        # rospy.loginfo("touch button: "+str(data.button)+" state: "+str(data.state))
-        # print("touch button: "+str(data.button)+" state: "+str(data.state))
-        
-        if data.button == 1:
+    def touch_cb(self,data):       
+        if data.button == 1: # press the head tactile button 1
             if data.state == 0: # move arm when release the button
                 self.wavingFlag = False
                 self.repeatFlag = False
                 self.set_home_position()
-        elif data.button == 2:
+        elif data.button == 2: # press the head tactile button 2
             if data.state == 0: # move arm when release the button
                 self.wavingFlag = True 
                 self.set_repetitive_motion()
-        elif data.button == 3:
+        elif data.button == 3: # press the head tactile button 3
             if data.state == 0: # move arm when release the button
                 self.repeatFlag = True
         
@@ -129,6 +117,7 @@ class Central:
         self.jointPub.publish(joint_angles_to_set)
         
     def set_home_position(self):
+        # set angle of both arms to predefined home position
         self.set_joint_angles("LShoulderPitch",pi/2)
         self.set_joint_angles("LShoulderRoll", 0.5)
         self.set_joint_angles("LElbowYaw", 0.0)
@@ -142,6 +131,7 @@ class Central:
         self.set_joint_angles("RWristYaw", 0.0)
 
     def set_repetitive_motion(self):
+        # set angle according to self.targetAngle
         self.set_joint_angles("LShoulderPitch", 0.0)
         self.set_joint_angles("LShoulderRoll", 0.5)
         self.set_joint_angles("LElbowYaw", self.targetAngle)
@@ -149,6 +139,8 @@ class Central:
         self.set_joint_angles("LWristYaw", pi/2)
 
     def set_mirror_motion(self):
+        # read the angle if left arm
+        # set the angle of right arm as the same or the opposite
         self.set_joint_angles("RShoulderPitch", self.joint_angles[2])
         self.set_joint_angles("RShoulderRoll", -self.joint_angles[3])
         self.set_joint_angles("RElbowYaw", -self.joint_angles[4])
@@ -169,30 +161,24 @@ class Central:
         rospy.Subscriber("/nao_robot/camera/top/camera/image_raw",Image,self.image_cb)
         self.jointPub = rospy.Publisher("joint_angles",JointAnglesWithSpeed,queue_size=10)
 
-
-        # test sequence to demonstrate setting joint angles
-        # self.set_stiffness(True) # don't let the robot stay enabled for too long, the motors will overheat!! (don't go for lunch or something)
-        # rospy.sleep(1.0)
-        # self.set_joint_angles(0.5)
-        # rospy.sleep(3.0)
-        # self.set_joint_angles(0.0)
-        # rospy.sleep(3.0)
-        # self.set_stiffness(False) # always check that your robot is in a stable position before disabling the stiffness!!
-
         rate = rospy.Rate(10) # sets the sleep time to 10ms
 
         begin = rospy.get_rostime()
 
-        angle = pi/8
+        angle = pi/8 # the increment angle of waving
 
         while not rospy.is_shutdown():
+
+            # when the repeatFlag is set, set right arm target in each loop
             if(self.repeatFlag):
                 self.set_mirror_motion()
-
+            
+            # when the wavingFlag is set and time interval exceed 3 seconds
+            # change the target angle to make "waving"
             if (self.wavingFlag is True) and (rospy.get_rostime().secs - begin.secs >= 3.0):
                 begin = rospy.get_rostime()
-                angle = -angle
-                self.targetAngle = angle-pi/2
+                angle = -angle # make it oppisite to change direction
+                self.targetAngle = angle-pi/2 # -pi/2 is the middle state
                 self.set_joint_angles("LElbowYaw", self.targetAngle)
 
 
@@ -201,9 +187,6 @@ class Central:
             
         
         self.set_stiffness(False)
-
-    # rospy.spin() just blocks the code from exiting, if you need to do any periodic tasks use the above loop
-    # each Subscriber is handled in its own thread
        
 
 if __name__=='__main__':
