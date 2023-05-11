@@ -1,4 +1,4 @@
-prefix=/home/nao/workspace/install
+prefix=/home/nao/bilhr23ss/workspace/install
 
 Name: tutorial_2
 Description: Description of tutorial_2

@@ -5,5 +5,8 @@ In order to update your code from your own laptop, clone this repository at firs
 
 ## Create new tutorial
 When creating a new tutorial project, please put it under "/workspace/src", just like what we did in tutorial 2.
-
+```
+cd src
+catkin_create_pkg tutorial_0 std_msgs rospy roscpp
+```
 

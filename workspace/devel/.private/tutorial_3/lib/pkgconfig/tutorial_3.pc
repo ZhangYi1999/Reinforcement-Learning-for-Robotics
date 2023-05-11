@@ -1,0 +1,8 @@
+prefix=/home/nao/bilhr23ss/workspace/devel/.private/tutorial_3
+
+Name: tutorial_3
+Description: Description of tutorial_3
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

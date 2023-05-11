@@ -1,4 +1,4 @@
-prefix=/home/nao/workspace/devel/.private/tutorial_2
+prefix=/home/nao/bilhr23ss/workspace/devel/.private/tutorial_2
 
 Name: tutorial_2
 Description: Description of tutorial_2

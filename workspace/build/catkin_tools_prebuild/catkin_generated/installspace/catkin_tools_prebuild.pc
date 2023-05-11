@@ -1,4 +1,4 @@
-prefix=/home/nao/workspace/install
+prefix=/home/nao/bilhr23ss/workspace/install
 
 Name: catkin_tools_prebuild
 Description: Description of catkin_tools_prebuild

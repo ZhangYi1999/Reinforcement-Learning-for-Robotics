@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: tutorial_2
-Description: Description of tutorial_2
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
