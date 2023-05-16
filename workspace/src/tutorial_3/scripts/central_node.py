@@ -13,6 +13,12 @@ import numpy as np
 
 from naoqi import ALProxy
 
+RShoulderPitch_min = -2.0857
+RShoulderPitch_max = 2.0857
+RShoulderRoll_min = -1.3265
+RShoulderRoll_max = 0.3142
+
+
 class Central:
 
 
@@ -22,15 +28,15 @@ class Central:
         self.joint_angles = []
         self.joint_velocities = []
         self.jointPub = 0
-        self.ShoulderStiffness = 0
         self.stiffness = False 
         self.wavingFlag = False
         self.repeatFlag = False
         self.targetAngle = -pi/2
 
-        # self.set_stiffness(True) # set stifftness at first
-
-        self.center = []
+        self.centerX = 0
+        self.centerY = 0
+        self.RShoulderPitch = 0
+        self.RShoulderRoll = 0
         self.training_data = []
 
         self.motion = ALProxy("ALMotion", "10.152.246.115", 9559)
@@ -49,28 +55,33 @@ class Central:
         self.joint_angles = data.position
         self.joint_velocities = data.velocity
 
-        pass
+        # normalize it 
+        self.RShoulderPitch = (self.joint_angles[2] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
+        self.RShoulderRoll = (self.joint_angles[3] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
 
-    def bumper_cb(self,data):
-        rospy.loginfo("bumper: "+str(data.bumper)+" state: "+str(data.state))
-        if data.bumper == 0:
-            self.stiffness = True
-        elif data.bumper == 1:
-            self.stiffness = False
+        pass
 
     def touch_cb(self,data):       
         if data.button == 1: # press the head tactile button 1
-            if data.state == 0: # move arm when release the button
+            if data.state == 0: # save data when release the button
                 # saving data
-                self.training_data.append([self.center[0],self.center[1],self.joint_angles[2],self.joint_angles[3]])
+                self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
+                print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
         if data.button == 2: # press the head tactile button 2
-            if data.state == 0: # move arm when release the button
-                print("save")
-                with open('data.npy', 'wb') as f:
-                    np.save(f, np.array(self.training_data))
-                # with open('/home/nao/bilhr23ss/workspace/data.txt', 'w') as f:
-                #     print(self.training_data)
-                #     f.write(self.training_data)
+            if data.state == 0: # write data into file when release the button
+                print("saving data")
+                with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
+                    for line in self.training_data:
+                        for value in line:
+                            f.write(str(value)+' ')
+                        f.write('\n') 
+                    f.close() 
+                print("data saved")  
+        if data.button == 3: # press the head tactile button 3
+            if data.state == 0: # turn off stiffness when release the button
+                names = "Body"
+                stiffnessLists = 0.0
+                self.motion.setStiffnesses(names,stiffnessLists)
 
     def image_cb(self,data):
         bridge_instance = CvBridge()
@@ -92,8 +103,10 @@ class Central:
         cX = int(M["m10"] / M["m00"])
         cY = int(M["m01"] / M["m00"])
 
-        # print("center position:["+str(cX)+","+str(cY)+"]")
-        self.center = [cX,cY]
+        # normalize the data
+        height, width, _ = cv_image.shape
+        self.centerX = 1.0*cX/width
+        self.centerY = 1.0*cY/height
 
         res = cv2.bitwise_and(cv_image,cv_image, mask= mask)
         
@@ -127,37 +140,11 @@ class Central:
         self.jointPub.publish(joint_angles_to_set)
         
     def set_home_position(self):
-        # set angle of both arms to predefined home position
-        self.set_joint_angles("LShoulderPitch",pi/2)
-        self.set_joint_angles("LShoulderRoll", 0.5)
-        self.set_joint_angles("LElbowYaw", 0.0)
-        self.set_joint_angles("LElbowRoll", -0.0349) 
-        self.set_joint_angles("LWristYaw", 0.0)
-
-        self.set_joint_angles("RShoulderPitch",pi/2)
-        self.set_joint_angles("RShoulderRoll", -0.5)
-        self.set_joint_angles("RElbowYaw", 0.0)
-        self.set_joint_angles("RElbowRoll", 0.0349) 
-        self.set_joint_angles("RWristYaw", 0.0)
-
-    def set_repetitive_motion(self):
-        # set angle according to self.targetAngle
-        self.set_joint_angles("LShoulderPitch", 0.0)
-        self.set_joint_angles("LShoulderRoll", 0.5)
-        self.set_joint_angles("LElbowYaw", self.targetAngle)
-        self.set_joint_angles("LElbowRoll", -1.5446)
-        self.set_joint_angles("LWristYaw", pi/2)
-
-    def set_mirror_motion(self):
-        # read the angle if left arm
-        # set the angle of right arm as the same or the opposite
-        self.set_joint_angles("RShoulderPitch", self.joint_angles[2])
-        self.set_joint_angles("RShoulderRoll", -self.joint_angles[3])
-        self.set_joint_angles("RElbowYaw", -self.joint_angles[4])
-        self.set_joint_angles("RElbowRoll", -self.joint_angles[5])
-        self.set_joint_angles("RWristYaw", -self.joint_angles[6])
-
-
+        # set the head and elbow in constant positions
+        names = ["HeadYaw","HeadPitch","RElbowYaw","RElbowRoll","RWristYaw"]
+        angles = [0.0,0.0,0.0,0.0,pi]
+        fractionMaxSpeed  = 0.2
+        self.motion.setAngles(names,angles,fractionMaxSpeed)
 
 
     def central_execute(self):
@@ -166,44 +153,28 @@ class Central:
         # create several topic subscribers
         rospy.Subscriber("key", String, self.key_cb)
         rospy.Subscriber("joint_states",JointState,self.joints_cb)
-        rospy.Subscriber("bumper",Bumper,self.bumper_cb)
         rospy.Subscriber("tactile_touch",HeadTouch,self.touch_cb)
         rospy.Subscriber("/nao_robot/camera/top/camera/image_raw",Image,self.image_cb)
         self.jointPub = rospy.Publisher("joint_angles",JointAnglesWithSpeed,queue_size=10)
-        self.ShoulderStiffness = rospy.Publisher("joint_stiffness",JointState,queue_size=10)
 
-        self.set_home_position()
-
-        name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
+        name = ["HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+        value = [0.9,0.9,0.9,0.9,0.9,0.9]
         self.motion.setStiffnesses(name,value)
 
-        rate = rospy.Rate(10) # sets the sleep time to 10ms
+        self.set_home_position()      
 
-        # begin = rospy.get_rostime()
+        #name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+        #value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
+        name = ["RShoulderPitch","RShoulderRoll"]
+        value = [0.0,0.0]
+        self.motion.setStiffnesses(name,value)
 
-        # angle = pi/8 # the increment angle of waving
+        rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
-
-            # # when the repeatFlag is set, set right arm target in each loop
-            # if(self.repeatFlag):
-            #     self.set_mirror_motion()
-            
-            # # when the wavingFlag is set and time interval exceed 3 seconds
-            # # change the target angle to make "waving"
-            # if (self.wavingFlag is True) and (rospy.get_rostime().secs - begin.secs >= 3.0):
-            #     begin = rospy.get_rostime()
-            #     angle = -angle # make it oppisite to change direction
-            #     self.targetAngle = angle-pi/2 # -pi/2 is the middle state
-            #     self.set_joint_angles("LElbowYaw", self.targetAngle)
-            # print('running')
-
             rate.sleep()
         rospy.spin()
             
-        
-        self.set_stiffness(False)
        
 
 if __name__=='__main__':
