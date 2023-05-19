@@ -38,6 +38,10 @@ class Central:
         self.RShoulderPitch = 0
         self.RShoulderRoll = 0
         self.training_data = []
+        self.target = [0,0]
+        self.l1 = []
+        self.l2 = []
+        self.load_weights()
 
         self.motion = ALProxy("ALMotion", "10.152.246.115", 9559)
 
@@ -56,6 +60,7 @@ class Central:
         self.joint_velocities = data.velocity
 
         # normalize it 
+        # print(self.joint_names[20],self.joint_names[21])
         self.RShoulderPitch = (self.joint_angles[20] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
         self.RShoulderRoll = (self.joint_angles[21] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
 
@@ -76,12 +81,15 @@ class Central:
                             f.write(str(value)+' ')
                         f.write('\n') 
                     f.close() 
-                print("data saved")  
+                print("data saved") 
+                # self.inference()
+                # self.update()
         if data.button == 3: # press the head tactile button 3
             if data.state == 0: # turn off stiffness when release the button
                 names = "Body"
                 stiffnessLists = 0.0
                 self.motion.setStiffnesses(names,stiffnessLists)
+
 
     def image_cb(self,data):
         bridge_instance = CvBridge()
@@ -141,11 +149,17 @@ class Central:
         
     def set_home_position(self):
         # set the head and elbow in constant positions
-        names = ["HeadYaw","HeadPitch","RElbowYaw","RElbowRoll","RWristYaw"]
-        angles = [0.0,0.0,0.0,0.0,pi]
+        names = ["HeadYaw","HeadPitch","RElbowYaw","RElbowRoll","RWristYaw","RShoulderPitch","RShoulderRoll"]
+        angles = [-1.0,0.0,0.0,0.0,pi,0.0,0.0]
         fractionMaxSpeed  = 0.2
         self.motion.setAngles(names,angles,fractionMaxSpeed)
 
+    def update(self):
+        # set the head and elbow in constant positions
+        names = ["RShoulderPitch","RShoulderRoll"]
+        angles = [self.target[0],self.target[1]]
+        fractionMaxSpeed  = 0.5
+        self.motion.setAngles(names,angles,fractionMaxSpeed)
 
     def central_execute(self):
         rospy.init_node('central_node',anonymous=True) #initilizes node, sets name
@@ -157,25 +171,54 @@ class Central:
         rospy.Subscriber("/nao_robot/camera/top/camera/image_raw",Image,self.image_cb)
         self.jointPub = rospy.Publisher("joint_angles",JointAnglesWithSpeed,queue_size=10)
 
-        name = ["HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        value = [0.9,0.9,0.9,0.9,0.9,0.9]
+        # self.motion.setStiffnesses("Body", 1.0)
+        # self.set_stiffness(True)
+
+        name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+        value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
         self.motion.setStiffnesses(name,value)
 
         self.set_home_position()      
-
-        #name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        #value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
-        name = ["RShoulderPitch","RShoulderRoll"]
-        value = [0.0,0.0]
-        self.motion.setStiffnesses(name,value)
 
         rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
             rate.sleep()
+            # self.inference()
+            # self.set_joint_angles("RShoulderPitch",self.target[0])
+            # self.set_joint_angles("RShoulderRoll",self.target[1])
+            # print(self.target)
         rospy.spin()
-            
-       
+
+        self.set_stiffness(False)
+
+    #forward and backward pass
+    def forward_pass(self, x):
+        
+        x_l1 = x.dot(self.l1)
+        x_sigmoid = self.sigmoid(x_l1)
+        x_l2 = x_sigmoid.dot(self.l2)
+        out = x_l2
+    
+        return out
+
+    #Sigmoid funstion
+    def sigmoid(self, x):
+        return 1/(np.exp(-x)+1)  
+
+    def load_weights(self):
+        
+        self.l1 = np.loadtxt('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/weights-l1.txt')
+        self.l2 = np.loadtxt('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/weights-l2.txt')
+    
+    def inference(self):
+
+        input_array = np.array([self.centerX, self.centerY])
+        output = self.forward_pass(input_array)
+        # print(output)
+        self.target[0] = output[0] * (RShoulderPitch_max - RShoulderPitch_min) + RShoulderPitch_min 
+        self.target[1] = output[1] * (RShoulderRoll_max - RShoulderRoll_min) + RShoulderRoll_min 
+
 
 if __name__=='__main__':
     # instantiate class and start loop function
