@@ -1,4 +1,5 @@
 {
     "python.pythonPath": "/usr/bin/python",
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "cmake.sourceDirectory": "${workspaceFolder}/workspace/build/catkin_tools_prebuild"
 }

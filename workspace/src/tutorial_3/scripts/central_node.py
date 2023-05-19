@@ -56,8 +56,8 @@ class Central:
         self.joint_velocities = data.velocity
 
         # normalize it 
-        self.RShoulderPitch = (self.joint_angles[2] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
-        self.RShoulderRoll = (self.joint_angles[3] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
+        self.RShoulderPitch = (self.joint_angles[20] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
+        self.RShoulderRoll = (self.joint_angles[21] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
 
         pass
 
