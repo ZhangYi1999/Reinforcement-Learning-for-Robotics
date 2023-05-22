@@ -13,11 +13,14 @@ import numpy as np
 
 from naoqi import ALProxy
 
-RShoulderPitch_min = -2.0857
-RShoulderPitch_max = 2.0857
-RShoulderRoll_min = -1.3265
-RShoulderRoll_max = 0.3142
-
+# RShoulderPitch_min = -2.0857
+# RShoulderPitch_max = 2.0857
+RShoulderPitch_min = -0.6810
+RShoulderPitch_max = 0.0291
+# RShoulderRoll_min = -1.3265
+# RShoulderRoll_max = 0.3142
+RShoulderRoll_min = -0.9176
+RShoulderRoll_max = 0.0250
 
 class Central:
 
@@ -43,7 +46,13 @@ class Central:
         self.l2 = []
         self.load_weights()
 
-        self.motion = ALProxy("ALMotion", "10.152.246.115", 9559)
+        
+        try:
+            self.motion = ALProxy("ALMotion", "10.152.246.115", 9559)
+        except Exception,e:
+            print "Could not create proxy to ALMotion"
+            print "Error was: ",e
+            sys.exit(1)
 
 
         pass
@@ -62,8 +71,9 @@ class Central:
         # normalize it 
         # print(self.joint_names[20],self.joint_names[21])
         self.RShoulderPitch = (self.joint_angles[20] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
+        # self.RShoulderPitch = self.joint_angles[20]
         self.RShoulderRoll = (self.joint_angles[21] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
-
+        # self.RShoulderRoll = self.joint_angles[21]
         pass
 
     def touch_cb(self,data):       
@@ -150,7 +160,7 @@ class Central:
     def set_home_position(self):
         # set the head and elbow in constant positions
         names = ["HeadYaw","HeadPitch","RElbowYaw","RElbowRoll","RWristYaw","RShoulderPitch","RShoulderRoll"]
-        angles = [-1.0,0.0,0.0,0.0,pi,0.0,0.0]
+        angles = [-0.8,0.0,0.0,0.0,pi,0.0,0.0]
         fractionMaxSpeed  = 0.2
         self.motion.setAngles(names,angles,fractionMaxSpeed)
 
@@ -173,10 +183,23 @@ class Central:
 
         # self.motion.setStiffnesses("Body", 1.0)
         # self.set_stiffness(True)
+        
+        names  = 'Body'
+        # If only one parameter is received, this is applied to all joints
+        stiffnesses  = 1.0
+        self.motion.setStiffnesses(names, stiffnesses)
 
-        name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
+        name = ["RShoulderPitch","RShoulderRoll"]
+        value = [0.0,0.0]
         self.motion.setStiffnesses(name,value)
+        
+        # name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+        # value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
+        # self.motion.setStiffnesses(name,value)
+
+        # name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+        # value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
+        # self.motion.setStiffnesses(name,value)
 
         self.set_home_position()      
 
