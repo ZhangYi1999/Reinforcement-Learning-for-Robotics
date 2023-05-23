@@ -45,6 +45,7 @@ class Central:
         self.l1 = []
         self.l2 = []
         self.load_weights()
+        self.set_stiffness(True)
 
         
         try:
@@ -77,23 +78,24 @@ class Central:
         pass
 
     def touch_cb(self,data):       
-        if data.button == 1: # press the head tactile button 1
-            if data.state == 0: # save data when release the button
+        #if data.button == 1: # press the head tactile button 1
+            #if data.state == 0: # save data when release the button
                 # saving data
-                self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
-                print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
+                #self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
+                #print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
         if data.button == 2: # press the head tactile button 2
             if data.state == 0: # write data into file when release the button
-                print("saving data")
-                with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
-                    for line in self.training_data:
-                        for value in line:
-                            f.write(str(value)+' ')
-                        f.write('\n') 
-                    f.close() 
-                print("data saved") 
-                # self.inference()
-                # self.update()
+                #print("saving data")
+                #with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
+                #    for line in self.training_data:
+                #        for value in line:
+                #            f.write(str(value)+' ')
+                #        f.write('\n') 
+                #    f.close() 
+                #print("data saved") 
+                print("You pressed a button!")
+                self.inference()
+                self.update()
         if data.button == 3: # press the head tactile button 3
             if data.state == 0: # turn off stiffness when release the button
                 names = "Body"
@@ -165,11 +167,14 @@ class Central:
         self.motion.setAngles(names,angles,fractionMaxSpeed)
 
     def update(self):
-        # set the head and elbow in constant positions
-        names = ["RShoulderPitch","RShoulderRoll"]
-        angles = [self.target[0],self.target[1]]
-        fractionMaxSpeed  = 0.5
-        self.motion.setAngles(names,angles,fractionMaxSpeed)
+
+        print("Updated position!")
+        #names = ["RShoulderPitch","RShoulderRoll"]
+        #angles = [self.target[0],self.target[1]]
+        #fractionMaxSpeed  = 0.25
+        self.set_joint_angles("RShoulderPitch", self.target[0])
+        self.set_joint_angles("RShoulderRoll", self.target[1])
+        #self.motion.setAngles(names,angles,fractionMaxSpeed)
 
     def central_execute(self):
         rospy.init_node('central_node',anonymous=True) #initilizes node, sets name
@@ -211,6 +216,8 @@ class Central:
             # self.set_joint_angles("RShoulderPitch",self.target[0])
             # self.set_joint_angles("RShoulderRoll",self.target[1])
             # print(self.target)
+
+
         rospy.spin()
 
         self.set_stiffness(False)
@@ -236,11 +243,13 @@ class Central:
     
     def inference(self):
 
+        print("Infered!")
         input_array = np.array([self.centerX, self.centerY])
         output = self.forward_pass(input_array)
         # print(output)
         self.target[0] = output[0] * (RShoulderPitch_max - RShoulderPitch_min) + RShoulderPitch_min 
         self.target[1] = output[1] * (RShoulderRoll_max - RShoulderRoll_min) + RShoulderRoll_min 
+        print("Inference result after de-normalizing: ", self.target)
 
 
 if __name__=='__main__':
