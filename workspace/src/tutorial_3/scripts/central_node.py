@@ -208,13 +208,12 @@ class Central:
 
         self.set_home_position()      
 
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)
 
         while not rospy.is_shutdown():
             rate.sleep()
-            # self.inference()
-            # self.set_joint_angles("RShoulderPitch",self.target[0])
-            # self.set_joint_angles("RShoulderRoll",self.target[1])
+            self.inference()
+            self.update()
             # print(self.target)
 
 
