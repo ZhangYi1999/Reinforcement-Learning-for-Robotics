@@ -13,12 +13,9 @@ import numpy as np
 
 from naoqi import ALProxy
 
-# RShoulderPitch_min = -2.0857
-# RShoulderPitch_max = 2.0857
 RShoulderPitch_min = -0.6810
 RShoulderPitch_max = 0.0291
-# RShoulderRoll_min = -1.3265
-# RShoulderRoll_max = 0.3142
+
 RShoulderRoll_min = -0.9176
 RShoulderRoll_max = 0.0250
 
@@ -69,22 +66,22 @@ class Central:
         self.joint_angles = data.position
         self.joint_velocities = data.velocity
 
-        # normalize it 
-        # print(self.joint_names[20],self.joint_names[21])
         self.RShoulderPitch = (self.joint_angles[20] - RShoulderPitch_min) / (RShoulderPitch_max - RShoulderPitch_min)
-        # self.RShoulderPitch = self.joint_angles[20]
         self.RShoulderRoll = (self.joint_angles[21] - RShoulderRoll_min) / (RShoulderRoll_max - RShoulderRoll_min)
-        # self.RShoulderRoll = self.joint_angles[21]
+        
         pass
 
     def touch_cb(self,data):       
-        #if data.button == 1: # press the head tactile button 1
-            #if data.state == 0: # save data when release the button
+        if data.button == 1: # press the head tactile button 1
+            if data.state == 0: # save data when release the button
                 # saving data
                 #self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
                 #print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
+                pass
+
         if data.button == 2: # press the head tactile button 2
             if data.state == 0: # write data into file when release the button
+                # This code was used for data collection
                 #print("saving data")
                 #with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
                 #    for line in self.training_data:
@@ -92,10 +89,9 @@ class Central:
                 #            f.write(str(value)+' ')
                 #        f.write('\n') 
                 #    f.close() 
-                #print("data saved") 
-                print("You pressed a button!")
-                self.inference()
-                self.update()
+                #print("data saved")
+                pass 
+
         if data.button == 3: # press the head tactile button 3
             if data.state == 0: # turn off stiffness when release the button
                 names = "Body"
@@ -169,13 +165,9 @@ class Central:
     def update(self):
 
         print("Updated position!")
-        #names = ["RShoulderPitch","RShoulderRoll"]
-        #angles = [self.target[0],self.target[1]]
-        #fractionMaxSpeed  = 0.25
         self.set_joint_angles("RShoulderPitch", self.target[0])
         self.set_joint_angles("RShoulderRoll", self.target[1])
-        #self.motion.setAngles(names,angles,fractionMaxSpeed)
-
+        
     def central_execute(self):
         rospy.init_node('central_node',anonymous=True) #initilizes node, sets name
 
@@ -186,8 +178,6 @@ class Central:
         rospy.Subscriber("/nao_robot/camera/top/camera/image_raw",Image,self.image_cb)
         self.jointPub = rospy.Publisher("joint_angles",JointAnglesWithSpeed,queue_size=10)
 
-        # self.motion.setStiffnesses("Body", 1.0)
-        # self.set_stiffness(True)
         
         names  = 'Body'
         # If only one parameter is received, this is applied to all joints
@@ -197,15 +187,6 @@ class Central:
         name = ["RShoulderPitch","RShoulderRoll"]
         value = [0.0,0.0]
         self.motion.setStiffnesses(name,value)
-        
-        # name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        # value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
-        # self.motion.setStiffnesses(name,value)
-
-        # name = ["RShoulderPitch","RShoulderRoll","HeadYaw", "HeadPitch","RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
-        # value = [0.0,0.0,0.9,0.9,0.9,0.9,0.9,0.9]
-        # self.motion.setStiffnesses(name,value)
-
         self.set_home_position()      
 
         rate = rospy.Rate(100)
@@ -214,8 +195,6 @@ class Central:
             rate.sleep()
             self.inference()
             self.update()
-            # print(self.target)
-
 
         rospy.spin()
 
@@ -245,7 +224,6 @@ class Central:
         print("Infered!")
         input_array = np.array([self.centerX, self.centerY])
         output = self.forward_pass(input_array)
-        # print(output)
         self.target[0] = output[0] * (RShoulderPitch_max - RShoulderPitch_min) + RShoulderPitch_min 
         self.target[1] = output[1] * (RShoulderRoll_max - RShoulderRoll_min) + RShoulderRoll_min 
         print("Inference result after de-normalizing: ", self.target)
