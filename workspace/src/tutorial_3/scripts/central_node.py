@@ -74,22 +74,22 @@ class Central:
     def touch_cb(self,data):       
         if data.button == 1: # press the head tactile button 1
             if data.state == 0: # save data when release the button
-                # saving data
-                #self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
-                #print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
+                #saving data
+                self.training_data.append([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll])
+                print('saved '+str(len(self.training_data))+' :'+str([self.centerX,self.centerY,self.RShoulderPitch,self.RShoulderRoll]))
                 pass
 
         if data.button == 2: # press the head tactile button 2
             if data.state == 0: # write data into file when release the button
                 # This code was used for data collection
-                #print("saving data")
-                #with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
-                #    for line in self.training_data:
-                #        for value in line:
-                #            f.write(str(value)+' ')
-                #        f.write('\n') 
-                #    f.close() 
-                #print("data saved")
+                print("saving data")
+                with open('/home/nao/bilhr23ss/workspace/src/tutorial_3/datasets/data.txt', 'w') as f:
+                    for line in self.training_data:
+                        for value in line:
+                            f.write(str(value)+' ')
+                        f.write('\n') 
+                    f.close() 
+                print("data saved")
                 pass 
 
         if data.button == 3: # press the head tactile button 3
@@ -193,8 +193,8 @@ class Central:
 
         while not rospy.is_shutdown():
             rate.sleep()
-            self.inference()
-            self.update()
+            # self.inference()
+            # self.update()
 
         rospy.spin()
 
