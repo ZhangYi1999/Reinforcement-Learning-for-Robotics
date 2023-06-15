@@ -1,0 +1,26 @@
+CMAC:
+
+Advantage:
+Fast convergence (fast learning), low MSE
+Good local estimates 
+Simple implementation
+Computationally not costly.
+Local generalization prevents overfitting.
+
+Disadvantage:
+Whole input space has to be covered in order to have good global estimates. -> more traning samples implies better inference. -> Needs lot of training data.
+More weight parameters needed.
+Mapping is discontinuous.
+
+FFNN:
+
+Advantage:
+Good global estimates even if the whole input space is not covered.
+Less training data needed.
+Mapping continuous.
+
+Disadvantage:
+Slower training time. 
+Harder to implement.
+Computationally expensive.
+Prone to overfitting.

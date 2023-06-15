@@ -54,10 +54,12 @@ class Central:
                 self.wavingFlag = False
                 self.repeatFlag = False
                 self.set_home_position()
+                print("Set home position!")
         elif data.button == 2: # press the head tactile button 2
             if data.state == 0: # move arm when release the button
                 self.wavingFlag = True 
                 self.set_repetitive_motion()
+                print("Set repetitive motion!")
         elif data.button == 3: # press the head tactile button 3
             if data.state == 0: # move arm when release the button
                 self.repeatFlag = True
@@ -172,6 +174,7 @@ class Central:
             # when the repeatFlag is set, set right arm target in each loop
             if(self.repeatFlag):
                 self.set_mirror_motion()
+            #print("In while loop!")
             
             # when the wavingFlag is set and time interval exceed 3 seconds
             # change the target angle to make "waving"
