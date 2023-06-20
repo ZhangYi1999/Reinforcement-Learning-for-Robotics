@@ -192,7 +192,7 @@ class Central:
         self.motion.setStiffnesses(names, stiffnesses)
 
         name = ["RShoulderPitch","RShoulderRoll"]
-        value = [0.0,0.0]
+        value = [0.9,0.9]
         self.motion.setStiffnesses(name,value)
         self.set_home_position()      
 
