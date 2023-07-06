@@ -1,0 +1,32 @@
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+[36m--[0m Using CATKIN_DEVEL_PREFIX: /home/nao/bilhr23ss/workspace/devel/.private/tutorial_5
+[36m--[0m Using CMAKE_PREFIX_PATH: /home/nao/bilhr23ss/workspace/devel;/opt/ros/kinetic
+[36m--[0m This workspace overlays: /home/nao/bilhr23ss/workspace/devel;/opt/ros/kinetic
+[36m--[0m Found PythonInterp: /usr/bin/python2 (found suitable version "2.7.12", minimum required is "2")
+[36m--[0m Using PYTHON_EXECUTABLE: /usr/bin/python2
+[36m--[0m Using Debian Python package layout
+[36m--[0m Using empy: /usr/bin/empy
+[36m--[0m Using CATKIN_ENABLE_TESTING: ON
+[36m--[0m Call enable_testing()
+[36m--[0m Using CATKIN_TEST_RESULTS_DIR: /home/nao/bilhr23ss/workspace/build/tutorial_5/test_results
+[36m--[0m Found gtest sources under '/usr/src/gmock': gtests will be built
+[36m--[0m Found gmock sources under '/usr/src/gmock': gmock will be built
+[36m--[0m Found PythonInterp: /usr/bin/python2 (found version "2.7.12")
+[36m--[0m Using Python nosetests: /usr/bin/nosetests-2.7
+[36m--[0m catkin 0.7.29
+[36m--[0m BUILD_SHARED_LIBS is on
+[31m[1mCMake Error[0m at /opt/ros/kinetic/share/catkin/cmake/catkin_install_python.cmake:68 (message):
+  catkin_install_python() called with non-existing file
+  '/home/nao/bilhr23ss/workspace/src/tutorial_5/scripts/central_node'.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:161 (catkin_install_python)
+
+
+[36m--[0m Configuring incomplete, errors occurred!
+See also "/home/nao/bilhr23ss/workspace/build/tutorial_5/CMakeFiles/CMakeOutput.log".
+See also "/home/nao/bilhr23ss/workspace/build/tutorial_5/CMakeFiles/CMakeError.log".
+Makefile:388: recipe for target 'cmake_check_build_system' failed
+make: *** [cmake_check_build_system] Error 1

@@ -1,0 +1,8 @@
+prefix=/home/nao/bilhr23ss/workspace/install
+
+Name: tutorial_5
+Description: Description of tutorial_5
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

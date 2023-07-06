@@ -1,0 +1,12 @@
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libssl.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+/usr/bin/cmake: /home/nao/pynaoqi/libcrypto.so.1.0.0: no version information available (required by /usr/lib/x86_64-linux-gnu/libcurl.so.4)
+[31m[1mCMake Error[0m at /opt/ros/kinetic/share/catkin/cmake/catkin_install_python.cmake:68 (message):
+  catkin_install_python() called with non-existing file
+  '/home/nao/bilhr23ss/workspace/src/tutorial_5/scripts/central_node'.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:161 (catkin_install_python)
+
+
+make: *** [cmake_check_build_system] Error 1
