@@ -139,7 +139,11 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/tutorial_5" TYPE PROGRAM FILES "/home/nao/bilhr23ss/workspace/build/tutorial_5/catkin_generated/installspace/test.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/tutorial_5" TYPE PROGRAM FILES "/home/nao/bilhr23ss/workspace/build/tutorial_5/catkin_generated/installspace/central_node.py")
+endif()
+
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/tutorial_5" TYPE PROGRAM FILES "/home/nao/bilhr23ss/workspace/build/tutorial_5/catkin_generated/installspace/save_config.py")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
