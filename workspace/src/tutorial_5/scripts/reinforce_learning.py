@@ -11,7 +11,7 @@ class Action(Enum):
 
 class Reinforce_Learning_Kick:
 
-    def __init__(self, number_of_states, min_hip_angle, max_hip_angle, number_of_states_gk):
+    def __init__(self, number_of_states, min_hip_angle, max_hip_angle, number_of_states_gk, centerX, hipjoint):
         # Total number of states
         self.number_of_states = number_of_states
         self.number_of_states_gk = number_of_states_gk
@@ -31,8 +31,8 @@ class Reinforce_Learning_Kick:
         self.hip_interval = (self.max_hip_angle - self.min_hip_angle) / self.number_of_states
         
         # Current State
-        self.s1 = 1
-        self.s2 = 0
+        self.s1 = int(round((number_of_states - 1)/2)) #int(round((hipjoint - min_hip_angle) / (max_hip_angle - min_hip_angle) * (number_of_states-1)))
+        self.s2 = int(round(centerX/320*(self.number_of_states_gk-1)))
 
         # Previous states
         self.prev_state_s1 = 0
@@ -40,9 +40,9 @@ class Reinforce_Learning_Kick:
 
         # Define rewards
         self.goal_reward = 20 # Reward for scoring goal
-        self.miss_penalty = -2 # Miss the goal
-        self.fall_penalty = -90 # Penalty for falling over
-        self.action_penalty = -1 # Penalty for each action execution
+        self.miss_penalty = -5 # Miss the goal
+        self.fall_penalty = -80 # Penalty for falling over
+        self.action_penalty = -3 # Penalty for each action execution
 
         # Input and output for DTs
         self.x_array = np.zeros(3)
@@ -76,35 +76,45 @@ class Reinforce_Learning_Kick:
             reward = self.action_penalty
         return reward
 
+    def reset_state(self, centerX):
+        self.s1 = 1
+        self.s2 = int(round(centerX/320*(self.number_of_states_gk-1)))
+
     def take_action(self, centerX):
+
+        print("state s1: {}".format(self.s1))
+        print("state s2: {}".format(self.s2))
         
         actions_allowed = self.allowed_actions()
 
-        print("Allowed actions:", actions_allowed)
-        print("s1: ", self.s1)
-        print("s2: ", self.s2)
-        print(self.Q)
-        Q_sa = self.Q[self.s1, int(self.s2), actions_allowed]
+        Q_sa = self.Q[self.s1, self.s2, actions_allowed]
+        print("Q: {}".format(self.Q))
+        #print("Q_sa: {}".format(Q_sa))
+
 
         # Get argmax of Q value (for action selection)
         a_idx = np.argmax(Q_sa)
         action = actions_allowed[a_idx]
+        #print("take action: {}".format(action))
 
         # Increment visits and update state set
         self.prev_state_s1 = copy.deepcopy(self.s1)
         self.prev_state_s2 = copy.deepcopy(self.s2)
 
-        self.visits[self.s1, self.s2, action] += 1   
+        self.visits[self.s1, self.s2,action] += 1 
+        print("Visit matrix after update: ", self.visits)  
 
         pause = False
-        if action == Action.KICK:
+        if Action(action) == Action.KICK:
             pause = True # pause after kicking ball
-        elif action == Action.LEFT:
+        elif Action(action) == Action.LEFT:
             self.s1 = self.s1 - 1
-        elif action == Action.RIGHT:
+        elif Action(action) == Action.RIGHT:
+            #print("take action right")
             self.s1 = self.s1 + 1
 
         self.s2 = int(round(centerX/320*(self.number_of_states_gk-1)))
+        #self.s2 = 5
 
         return action, np.array([self.s1, self.s2])
 
@@ -120,6 +130,7 @@ class Reinforce_Learning_Kick:
         
         actions_allowed.append(0) #Action.KICK
         actions_allowed = np.array(actions_allowed, dtype = int)
+        print(actions_allowed)
 
         return actions_allowed
 
@@ -149,6 +160,7 @@ class Reinforce_Learning_Kick:
                 for am in range(len(Action)):
                     self.Pm[sm1, sm2, am] = self.combine_results(sm1, sm2, am)
                     self.Rm[sm1, sm2, am] = self.get_predictions(sm1, sm2, am)
+        return Change
 
     def compute_values(self, exp):
         
@@ -216,4 +228,5 @@ class Reinforce_Learning_Kick:
     def check_model(self):
         
         exp = np.all(self.Rm[self.prev_state_s1, self.prev_state_s2, :] < 0)
+        #print("Rm: {}".format(self.Rm))
         return exp
