@@ -1,0 +1,10 @@
+Using a static goalkeeper the robot quickly learns to shoot in one spot that results in a goal.
+The submitted plot was for a goalkeeper that moves to the goal position any time a goal is scored.
+Initially he misses randomly because he hasn't learned anything yet.
+Then he kicks to the left of the goalkeeper and hits twice in a row.
+Once the goalkeeper is in the left corner of the goal he first trys kicking further and further left.
+After this results in a lot of misses he continues to explore, without kicking, as each position has resulted in a miss in the past.
+With more training steps the cummulative -1 penalty per action should eventually add up to make him try kicking in different locations again, 
+but training is quite slow, because it has to be done manually on the robot.
+
+Since we used decision trees for the transition function they might not have been optimal and also introducing issues.
